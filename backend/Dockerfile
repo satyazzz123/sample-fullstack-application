@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:18-alpine
+FROM node:16-alpine
 
 # Set the working directory in the container
 WORKDIR /app
@@ -13,14 +13,12 @@ RUN yarn install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Copy entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-
-# Make entrypoint script executable
-RUN chmod +x /app/entrypoint.sh
+# Run Prisma migrations and generate the Prisma client
+RUN npx prisma migrate dev --name init && \
+    npx prisma generate
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE 3000
 
-# Set the entrypoint to the script
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Start the application
+CMD ["yarn", "start"]
