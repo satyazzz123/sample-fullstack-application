@@ -9,6 +9,5 @@ export const getTodos = async () => {
 
 export const addTodo = async (body: string) => {
     const response = await axios.post(`${TODO_URL}`, { body });
-
     return response.data;
 }

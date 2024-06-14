@@ -1,10 +1,8 @@
 version: '3.8'
 
 services:
-  backend123:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+  backend:
+    image: ghcr.io/satyazzz123/sample-fullstack-application/backend-image:latest
     ports:
       - '3001:3001'
     depends_on:
@@ -18,13 +16,11 @@ services:
     command: ["/bin/bash", "-c", "/wait-for-it.sh db:5432 --timeout=60 --strict -- npx prisma migrate dev --name init && npx prisma generate && yarn start"]
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/satyazzz123/sample-fullstack-application/frontend-image:latest
     ports:
       - '3000:3000'
     depends_on:
-      - backend123
+      - backend
     environment:
       - NEXT_PUBLIC_BACKEND_BASE_URL=http://backend:3001
     networks:
