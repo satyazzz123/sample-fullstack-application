@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  backend:
+  backend123:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -10,8 +10,9 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - backend.env
+    environment:
+      - DATABASE_URL=postgresql://youruser:yourpassword@db:5432/yourdatabase
+      - REDIS_URL=redis://redis:6379
     networks:
       - my_network
     command: ["/bin/bash", "-c", "/wait-for-it.sh db:5432 --timeout=60 --strict -- npx prisma migrate dev --name init && npx prisma generate && yarn start"]
@@ -21,11 +22,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '3000:3000' # Adjust if frontend runs on a different port
+      - '3000:3000'
     depends_on:
-      - backend
+      - backend123
     environment:
-      - NEXT_PUBLIC_BACKEND_URL=http://backend:3001 # Use backend service name for inter-container communication
+      - NEXT_PUBLIC_BACKEND_BASE_URL=http://backend:3001
     networks:
       - my_network
 
